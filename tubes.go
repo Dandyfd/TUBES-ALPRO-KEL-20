@@ -359,8 +359,6 @@ func urutkanHargaMinuman() {
 		key := daftarMinuman[i]
 		j := i - 1
 
-		// Pindahkan elemen-elemen daftarMinuman[0..i-1], yang lebih besar dari key,
-		// ke satu posisi di depan posisi saat ini
 		for j >= 0 && daftarMinuman[j].hargaMinuman > key.hargaMinuman {
 			daftarMinuman[j+1] = daftarMinuman[j]
 			j = j - 1
