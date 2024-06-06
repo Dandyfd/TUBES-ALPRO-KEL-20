@@ -23,12 +23,12 @@ var jumlahMakanan = 7
 var jumlahMinuman = 7
 
 var daftarMakanan = ArrMakanan{
-	{"Ayam geprek", 20000},
-	{"Chicken Katsu", 23000},
-	{"Kentang Goreng", 15000},
-	{"Pisang bakar", 15000},
-	{"Cireng bumbu rujak", 10000},
-	{"Nasi Goreng", 15000},
+	{"AyamGeprek", 20000},
+	{"ChickenKatsu", 23000},
+	{"KentangGoreng", 15000},
+	{"PisangBakar", 15000},
+	{"CirengBumbuRujak", 10000},
+	{"NasiGoreng", 15000},
 	{"Steak", 30000},
 }
 
@@ -36,10 +36,10 @@ var daftarMinuman = ArrMinuman{
 	{"Americano", 14000},
 	{"Latte", 15000},
 	{"Espresso", 17000},
-	{"Signature Chocolate", 14000},
-	{"Matcha Latte", 13000},
-	{"Es teh manis", 10000},
-	{"Teh Tarik", 12000},
+	{"SignatureChocolate", 14000},
+	{"MatchaLatte", 13000},
+	{"EsTehManis", 10000},
+	{"TehTarik", 12000},
 }
 
 func main() {
@@ -76,15 +76,9 @@ func admin() {
 	fmt.Println("||   4. Cari Menu Minuman   ||")
 	fmt.Println("||   0. Exit                ||")
 	fmt.Println("|| ------------------------ ||")
+	fmt.Print("Masukan Pilihan Anda: ")
 	fmt.Scan(&action)
 	for action != "0" {
-		fmt.Println("|| ------------------------ ||")
-		fmt.Println("||   1. Tambah Item         ||")
-		fmt.Println("||   2. Hapus Item          ||")
-		fmt.Println("||   3. Cari Menu Makanan   ||")
-		fmt.Println("||   4. Cari Menu Minuman   ||")
-		fmt.Println("||   0. Exit                ||")
-		fmt.Println("|| ------------------------ ||")
 		if action == "1" {
 			tambahItem()
 		} else if action == "2" {
@@ -94,6 +88,14 @@ func admin() {
 		} else if action == "4" {
 			cariMenuMinuman()
 		}
+		fmt.Println("|| ------------------------ ||")
+		fmt.Println("||   1. Tambah Item         ||")
+		fmt.Println("||   2. Hapus Item          ||")
+		fmt.Println("||   3. Cari Menu Makanan   ||")
+		fmt.Println("||   4. Cari Menu Minuman   ||")
+		fmt.Println("||   0. Exit                ||")
+		fmt.Println("|| ------------------------ ||")
+		fmt.Print("Masukan Pilihan Anda: ")
 		fmt.Scan(&action)
 	}
 	fmt.Println("|| ------------------ ||")
@@ -184,23 +186,34 @@ func hapusItem() {
 
 func cariMenuMakanan() {
 	var nama string
-
+	var i int
 	fmt.Print("Masukkan nama menu yang dicari: ")
 	fmt.Scan(&nama)
 
-	for i := 0; i < jumlahMakanan-1; i++ {
+	//mengurutkan menu menggunakan selection sort
+	for i = 0; i < jumlahMakanan-1; i++ {
 		for j := 0; j < jumlahMakanan-i-1; j++ {
 			if daftarMakanan[j].hargaMakanan > daftarMakanan[j+1].hargaMakanan {
 				daftarMakanan[j], daftarMakanan[j+1] = daftarMakanan[j+1], daftarMakanan[j]
 			}
 		}
 	}
-	for i := 0; i < jumlahMakanan; i++ {
-		if daftarMakanan[i].namaMakanan == nama {
-			fmt.Printf("Makanan ditemukan: %s - Rp%d\n", daftarMakanan[i].namaMakanan, daftarMakanan[i].hargaMakanan)
+
+	//Binary search
+	low := 0
+	high := jumlahMakanan - 1
+	for low <= high {
+		mid := (low + high) / 2
+		if daftarMakanan[mid].namaMakanan == nama {
+			fmt.Printf("Makanan ditemukan: %s - Rp%d\n", daftarMakanan[mid].namaMakanan, daftarMakanan[mid].hargaMakanan)
 			return
+		} else if daftarMakanan[mid].namaMakanan < nama {
+			low = mid + 1
+		} else {
+			high = mid - 1
 		}
 	}
+
 	fmt.Println("Menu tidak ditemukan")
 }
 
@@ -381,17 +394,24 @@ func lihatPesanan(pesanan []string, totalHarga int) {
 }
 
 func selesaiDanBayar(totalHarga int) {
-	var bayar int
+	var bayar, kurang int
 
 	fmt.Printf("Total harga: Rp.%d\n", totalHarga)
-	fmt.Print("Masukkan jumlah uang yang dibayar: Rp.")
-	fmt.Scan(&bayar)
 
-	if bayar >= totalHarga {
-		fmt.Printf("Kembalian: Rp%d\n", bayar-totalHarga)
-	} else {
-		fmt.Printf("Uang yang dibayar kurang Rp%d\n", totalHarga-bayar)
+	for totalHarga > 0 {
+		fmt.Print("Masukkan jumlah uang yang dibayar: Rp.")
+		fmt.Scan(&bayar)
+
+		if bayar >= totalHarga {
+			fmt.Printf("Kembalian: Rp%d\n", bayar-totalHarga)
+			totalHarga = 0
+		} else {
+			kurang = totalHarga - bayar
+			fmt.Printf("Uang yang dibayar kurang Rp. %d\n", kurang)
+			totalHarga = kurang
+		}
 	}
+
 	fmt.Println("|| ------------------- ||")
 	fmt.Println("||     Terimakasih     ||")
 	fmt.Println("|| ------------------- ||")
